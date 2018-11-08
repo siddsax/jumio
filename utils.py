@@ -7,11 +7,14 @@ import torch.optim as optim
 import argparse
 import os
 import numpy as np
+import seaborn as sn
+import pandas as pd
+from sklearn.metrics import confusion_matrix
 
 def getData(args):
 
     train_loader = torch.utils.data.DataLoader(
-    torchvision.datasets.MNIST(args.modelStorePath, train=True, download=True,
+    torchvision.datasets.MNIST(args.dataPath, train=True, download=True,
                                 transform=torchvision.transforms.Compose([
                                 torchvision.transforms.ToTensor(),
                                 torchvision.transforms.Normalize(
@@ -20,7 +23,7 @@ def getData(args):
     batch_size=args.batchSize, shuffle=True)
 
     test_loader = torch.utils.data.DataLoader(
-    torchvision.datasets.MNIST(args.modelStorePath, train=False, download=True,
+    torchvision.datasets.MNIST(args.dataPath, train=False, download=True,
                                 transform=torchvision.transforms.Compose([
                                 torchvision.transforms.ToTensor(),
                                 torchvision.transforms.Normalize(
@@ -42,8 +45,8 @@ def prettyPrint2(test_loss, correct, testSize, output, target):
     test_loss, correct, testSize, 100. * correct / testSize))
 
     allRates = np.array(ratesMC(output, target))
-    print("")
 
+    return allRates[:,2].mean()
 def rates(pred_labels, true_labels):
   TP = 100*np.sum(np.logical_and(pred_labels == 1, true_labels == 1))/(1.0*np.sum(true_labels))
   TN = 100*np.sum(np.logical_and(pred_labels == 0, true_labels == 0))/(-1.0*np.sum(true_labels-1))
@@ -94,3 +97,11 @@ def predHot(output):
   b[np.arange(len(a)), a.argmax(1)] = 1
 
   return b
+
+def makeCF(y_test, y_pred):
+    array = confusion_matrix(y_test.argmax(axis=1), y_pred.argmax(axis=1))
+    df_cm = pd.DataFrame(array, index = [i for i in "0123456789"],
+                    columns = [i for i in "0123456789"])
+    plt.figure(figsize = (10,7))
+    sn.heatmap(df_cm, annot=True)
+    plt.savefig('CF.png')

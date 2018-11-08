@@ -86,6 +86,7 @@ class Net(nn.Module):
         x = F.relu(self.fc1(x))
         x = self.bn7(x)
         x = self.fc_drop(x)
-        x = F.log_softmax(self.fc2(x), -1)
+        # x = F.log_softmax(self.fc2(x), -1)
+        x = F.softmax(self.fc2(x), -1)
 
         return x
