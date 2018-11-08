@@ -1,6 +1,6 @@
 import torch
 import torchvision
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
@@ -82,6 +82,11 @@ def test(epoch, bestFP):
     bestFP = falsePos
     torch.save(network.state_dict(), args.modelStorePath + '/model.pt')
     print("---------------------SAVED------------------")
+
+for epoch in range(1, args.n_epochs + 1):
+  train(epoch)
+  test(epoch)
+  #genMyPlots(train_losses, test_losses, train_counter, test_counter)
 
   return bestFP
 
