@@ -20,6 +20,8 @@ parser.add_argument('--batchSize', type=int, default=64)
 parser.add_argument('--dataPath', type=str, default="data")
 parser.add_argument('--msp', dest = 'modelStorePath', type=str, default="savedModels")
 parser.add_argument('--vt', dest = 'varThresh', type=float, default=.1)
+parser.add_argument('--ns', dest = 'numSamp', type=int, default=20)
+parser.add_argument('--tr', dest = 'train', type=int, default=20)
 
 args = parser.parse_args()
 print(args)
@@ -39,7 +41,6 @@ optimizer = optim.SGD(network.parameters(), lr=args.lr, momentum=args.momentum)
 
 train_losses, train_counter, test_losses, test_counter = [], [], [], []
 
-bestFP = float('inf')
 
 def train(epoch):
   network.train()
@@ -56,8 +57,9 @@ def train(epoch):
       train_losses.append(loss.item())
       train_counter.append((batch_idx*args.batchSize) + ((epoch-1)*len(train_loader)))
 
+    # break
 
-def test(epoch):
+def test(epoch, bestFP):
   network.eval()
   test_loss, correct, outputAll, targetAll = 0, 0, [], []
   with torch.no_grad():
@@ -77,26 +79,26 @@ def test(epoch):
   makeCF(np.concatenate(targetAll, axis=0), np.concatenate(outputAll, axis=0))
 
   if falsePos < bestFP:
-    falsePos = bestFP
+    bestFP = falsePos
     torch.save(network.state_dict(), args.modelStorePath + '/model.pt')
+    print("---------------------SAVED------------------")
 
-# for epoch in range(1, args.n_epochs + 1):
-#   train(epoch)
-#   test(epoch)
-#   genMyPlots(train_losses, test_losses, train_counter, test_counter)
+  return bestFP
 
 def decision():
     finOutAll, finTarAll, lO = [], [], 0
     for data, target in test_loader:
       outs = []
-      for i in range(100):
+      for i in range(args.numSamp):
         outs.append(network(data).view(1, -1, 10).data.cpu().numpy())
       
       outs = np.concatenate(outs, axis=0)
       outM = np.mean(outs, axis=0)
       outV = np.var(outs, axis=0)
 
-      out = np.argmax(outM, axis=1).tolist()
+      network.eval()
+      out = np.argmax(predHot(network(data)).tolist(), axis=1)
+      network.train()
       target = target.data.cpu().numpy().tolist()
 
       finOut = []
@@ -113,15 +115,14 @@ def decision():
       print(lO)
     ratesMC(np.concatenate(finOutAll, axis=0), np.concatenate(finTarAll, axis=0))
     print("Left Out = " + str(float((100.0*lO)/len(test_loader.dataset))))
-    # print(lO)
-      # args.varThresh
-      
-      # test_loss += F.nll_loss(output, target, size_average=False).item()
-      # pred = output.data.max(1, keepdim=True)[1]
-      # correct += pred.eq(target.data.view_as(pred)).sum()
-
-      # outputAll.append(predHot(output))
-      # targetAll.append(np.eye(10)[target.data.cpu().numpy()])
 
 
-decision()
+bestFP = float('inf')
+if args.train:
+  for epoch in range(1, args.n_epochs + 1):
+    train(epoch)
+    bestFP = test(epoch, bestFP)
+    genMyPlots(train_losses, test_losses, train_counter, test_counter)
+
+else:
+  decision()
