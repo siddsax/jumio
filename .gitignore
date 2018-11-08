@@ -1,1 +1,5 @@
+*.pyc
+savedModels
+data
 mnist.csv
+*.png
