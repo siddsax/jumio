@@ -2,7 +2,7 @@
 
 The task is to predict mnist digits, while trying to minimize the false positive rates by using a decision mechanism that says 'not sure' for data points its not sure.
 
-![alt text]("CF.png")
+![alt text](CF.png)
 Confusion Matrix
 
 The basic model is a cnn based upon [1]. It consists of 3 blocks of convolutions, each block having the same number of filters. Summarized as 
@@ -27,7 +27,6 @@ Each layer has batch-normalization
 This leads to the following scores.
 
 | True Pos. | True Neg. | False Pos. | False Neg. |
-| :-----: | :-----: | :-----:| :-----:|
 | 99.5918 | 99.9778 | 0.0221 | 0.4081 |
 | 99.9118 | 99.9435 | 0.0564 | 0.0881 |
 | 99.6124 | 99.8773 | 0.1226 | 0.3875 |
@@ -38,9 +37,8 @@ This leads to the following scores.
 | 99.2217 | 99.9331 | 0.0668 | 0.7782 |
 | 99.5893 | 100.0   | 0.0    | 0.4106 |
 | 99.5105 | 99.9465 | 0.0534 | 0.4894 |
-| :-----: | :-----: | :-----:| :-----:|
+
 | 99.4053 | 99.9443 | 0.0556 | 0.5946 |
-| :-----: | :-----: | :-----:| :-----:|
 
 The second part of the task is to reduce the false negative rate, by not predicting some of the data points based on a criteria. I use bayesian CNN for this part as proposed in [2]. In this work Gal et al. proposed that dropouts can be interpretted as an ensemble of several models while testing whereas each configuration being one model while training. This leads to the fact that the prediction of the model at test time is an aggregation of a distribution over models, hence the variance in prediction (note with dropouts at test times too) can be treated as model variance.
 
@@ -49,7 +47,6 @@ I use this variance as a sign of the model not being sure on the input with a th
 After using the decision criteria, the results are the following
 
 | True Pos. | True Neg. | False Pos. | False Neg. |
-| :-----: | :-----: | :-----:| :-----:|
 | 99.8962 | 99.9886 | 0.0113 | 0.1037 |
 | 100.0   | 99.9884 | 0.0115 | 0.0    |
 | 100.0   | 99.9886 | 0.0113 | 0.0    |
@@ -60,9 +57,8 @@ After using the decision criteria, the results are the following
 | 99.9002 | 99.9886 | 0.0113 | 0.0997 |
 | 99.8955 | 100.0   | 0.0    | 0.1044 |
 | 99.7952 | 99.9773 | 0.0226 | 0.2047 |
-| :-----: | :-----: | :-----:| :-----:|
+
 | 99.8956 | 99.9886 | 0.0113 | 0.1043 |
-| :-----: | :-----: | :-----:| :-----:|
 
 Left Out Percentage : 1.99%
 
