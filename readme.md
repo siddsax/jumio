@@ -63,6 +63,7 @@ Mean  | 99.8956 | 99.9886 | 0.0113 | 0.1043 |
 Left Out Percentage : 1.99%
 
 [1] https://www.kaggle.com/cdeotte/how-to-choose-cnn-architecture-mnist
+
 [2] http://mlg.eng.cam.ac.uk/yarin/thesis/thesis.pdf
 
 <!-- 
