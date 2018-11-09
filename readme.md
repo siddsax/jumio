@@ -26,19 +26,19 @@ Each layer has batch-normalization
 
 This leads to the following scores.
 
-| True Pos. | True Neg. | False Pos. | False Neg. |
-| 99.5918 | 99.9778 | 0.0221 | 0.4081 |
-| 99.9118 | 99.9435 | 0.0564 | 0.0881 |
-| 99.6124 | 99.8773 | 0.1226 | 0.3875 |
-| 99.6039 | 99.9221 | 0.0778 | 0.3960 |
-| 99.7963 | 99.9556 | 0.0443 | 0.2036 |
-| 99.1031 | 99.9451 | 0.0548 | 0.8968 |
-| 99.2693 | 99.9668 | 0.0331 | 0.7306 |
-| 99.2217 | 99.9331 | 0.0668 | 0.7782 |
-| 99.5893 | 100.0   | 0.0    | 0.4106 |
-| 99.5105 | 99.9465 | 0.0534 | 0.4894 |
-
-| 99.4053 | 99.9443 | 0.0556 | 0.5946 |
+Class | True Pos. | True Neg. | False Pos. | False Neg. |
+------|---------|---------|--------|--------|
+   0  | 99.5918 | 99.9778 | 0.0221 | 0.4081 |
+   1  | 99.9118 | 99.9435 | 0.0564 | 0.0881 |
+   2  | 99.6124 | 99.8773 | 0.1226 | 0.3875 |
+   3  | 99.6039 | 99.9221 | 0.0778 | 0.3960 |
+   4  | 99.7963 | 99.9556 | 0.0443 | 0.2036 |
+   5  | 99.1031 | 99.9451 | 0.0548 | 0.8968 |
+   6  | 99.2693 | 99.9668 | 0.0331 | 0.7306 |
+   7  | 99.2217 | 99.9331 | 0.0668 | 0.7782 |
+   8  | 99.5893 | 100.0   | 0.0    | 0.4106 |
+   9  | 99.5105 | 99.9465 | 0.0534 | 0.4894 |
+ Mean | 99.4053 | 99.9443 | 0.0556 | 0.5946 |
 
 The second part of the task is to reduce the false negative rate, by not predicting some of the data points based on a criteria. I use bayesian CNN for this part as proposed in [2]. In this work Gal et al. proposed that dropouts can be interpretted as an ensemble of several models while testing whereas each configuration being one model while training. This leads to the fact that the prediction of the model at test time is an aggregation of a distribution over models, hence the variance in prediction (note with dropouts at test times too) can be treated as model variance.
 
@@ -46,19 +46,19 @@ I use this variance as a sign of the model not being sure on the input with a th
 
 After using the decision criteria, the results are the following
 
-| True Pos. | True Neg. | False Pos. | False Neg. |
-| 99.8962 | 99.9886 | 0.0113 | 0.1037 |
-| 100.0   | 99.9884 | 0.0115 | 0.0    |
-| 100.0   | 99.9886 | 0.0113 | 0.0    |
-| 99.8996 | 100.0   | 0.0    | 0.1003 |
-| 99.8962 | 99.9773 | 0.0226 | 0.1037 |
-| 99.8859 | 99.9887 | 0.0112 | 0.1140 |
-| 99.7874 | 99.9887 | 0.0112 | 0.2125 |
-| 99.9002 | 99.9886 | 0.0113 | 0.0997 |
-| 99.8955 | 100.0   | 0.0    | 0.1044 |
-| 99.7952 | 99.9773 | 0.0226 | 0.2047 |
-
-| 99.8956 | 99.9886 | 0.0113 | 0.1043 |
+Class | True Pos. | True Neg. | False Pos. | False Neg. |
+------|---------|---------|--------|--------|
+  0   | 99.8962 | 99.9886 | 0.0113 | 0.1037 |
+  1   | 100.0   | 99.9884 | 0.0115 | 0.0    |
+  2   | 100.0   | 99.9886 | 0.0113 | 0.0    |
+  3   | 99.8996 | 100.0   | 0.0    | 0.1003 |
+  4   | 99.8962 | 99.9773 | 0.0226 | 0.1037 |
+  5   | 99.8859 | 99.9887 | 0.0112 | 0.1140 |
+  6   | 99.7874 | 99.9887 | 0.0112 | 0.2125 |
+  7   | 99.9002 | 99.9886 | 0.0113 | 0.0997 |
+  8   | 99.8955 | 100.0   | 0.0    | 0.1044 |
+  9   | 99.7952 | 99.9773 | 0.0226 | 0.2047 |
+Mean  | 99.8956 | 99.9886 | 0.0113 | 0.1043 |
 
 Left Out Percentage : 1.99%
 
