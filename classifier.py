@@ -61,7 +61,7 @@ class Net(nn.Module):
         self.fc_drop = nn.Dropout(.4)
         self.fc2 = nn.Linear(128, 10)
 
-    def forward(self, x):
+    def forward(self, x, decision=0):
 
         x = F.relu(self.conv1(x))
         x = self.bn1(x)
@@ -86,7 +86,9 @@ class Net(nn.Module):
         x = F.relu(self.fc1(x))
         x = self.bn7(x)
         x = self.fc_drop(x)
-        # x = F.log_softmax(self.fc2(x), -1)
-        x = F.softmax(self.fc2(x), -1)
+        if decision:
+            x = F.softmax(self.fc2(x), -1)
+        else:
+            x = F.log_softmax(self.fc2(x), -1)
 
         return x

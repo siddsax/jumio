@@ -83,11 +83,6 @@ def test(epoch, bestFP):
     torch.save(network.state_dict(), args.modelStorePath + '/model.pt')
     print("---------------------SAVED------------------")
 
-for epoch in range(1, args.n_epochs + 1):
-  train(epoch)
-  test(epoch)
-  #genMyPlots(train_losses, test_losses, train_counter, test_counter)
-
   return bestFP
 
 def decision():
@@ -95,7 +90,7 @@ def decision():
     for data, target in test_loader:
       outs = []
       for i in range(args.numSamp):
-        outs.append(network(data).view(1, -1, 10).data.cpu().numpy())
+        outs.append(network(data, decision=1).view(1, -1, 10).data.cpu().numpy())
       
       outs = np.concatenate(outs, axis=0)
       outM = np.mean(outs, axis=0)

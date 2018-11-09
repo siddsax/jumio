@@ -1,31 +1,75 @@
 # TASK
 
-Your task if you accept it, is to train a classifier model on the provided
-MNIST dataset using the python libraries of you choice.
+The task is to predict mnist digits, while trying to minimize the false positive rates by using a decision mechanism that says 'not sure' for data points its not sure.
 
-For this task, you will need to build a test set with at least 1000 samples
-per class.
+![alt text]("CF.png")
+Confusion Matrix
 
-Train the model of your choice and compute the following metrics:
-1. Confusion matrix
-2. Per class FPR
-3. Per class TPR
+The basic model is a cnn based upon [1]. It consists of 3 blocks of convolutions, each block having the same number of filters. Summarized as 
 
-The goal now for your classifier is to reach a maximum false positive rate
-of 0.015% for each class in the test set while maintaining the recall as high
-as possible, by carefully designing a decision strategy. Your classifier will
-output 'not_sure' for cases where the model prefers to avoid making a decision.
+784 - [32C3-32C3-32C5S2] - DRPO - [64C3-64C3-64C5S2] - DRPO - 128F -  DRPO - 10F - sigmoid
 
-With your updated decision strategy recompute the following metrics on your
-test set:
-1. Confusion matrix
-2. Per class FPR
-3. Per class TPR
-4. Coverage => 1 - (num predicted 'not_sure' examples) / (total examples)
+32C3 := Filters = 32 , kernel size = 3, stride = 1
+32C3 := Filters = 32 , kernel size = 3, stride = 1
+32C3 := Filters = 32 , kernel size = 5, stride = 2
 
-Once the task is complete, please return us your code implementation (ipython
-notebook or python scripts) and make sure we can run it on our side.
+64C3 := Filters = 64 , kernel size = 3, stride = 1
+64C3 := Filters = 64 , kernel size = 3, stride = 1
+64C3 := Filters = 64 , kernel size = 5, stride = 2
 
+128F := Fully Connected Layer with 128 as output
+10F := Fully Connected Layer with 10 as output
+
+DRPO := Dropout with probability to drop as .4
+Each layer other than the final layer are relu
+Each layer has batch-normalization 
+
+This leads to the following scores.
+
+| True Pos. | True Neg. | False Pos. | False Neg. |
+| :-----: | :-----: | :-----:| :-----:|
+| 99.5918 | 99.9778 | 0.0221 | 0.4081 |
+| 99.9118 | 99.9435 | 0.0564 | 0.0881 |
+| 99.6124 | 99.8773 | 0.1226 | 0.3875 |
+| 99.6039 | 99.9221 | 0.0778 | 0.3960 |
+| 99.7963 | 99.9556 | 0.0443 | 0.2036 |
+| 99.1031 | 99.9451 | 0.0548 | 0.8968 |
+| 99.2693 | 99.9668 | 0.0331 | 0.7306 |
+| 99.2217 | 99.9331 | 0.0668 | 0.7782 |
+| 99.5893 | 100.0   | 0.0    | 0.4106 |
+| 99.5105 | 99.9465 | 0.0534 | 0.4894 |
+| :-----: | :-----: | :-----:| :-----:|
+| 99.4053 | 99.9443 | 0.0556 | 0.5946 |
+| :-----: | :-----: | :-----:| :-----:|
+
+The second part of the task is to reduce the false negative rate, by not predicting some of the data points based on a criteria. I use bayesian CNN for this part as proposed in [2]. In this work Gal et al. proposed that dropouts can be interpretted as an ensemble of several models while testing whereas each configuration being one model while training. This leads to the fact that the prediction of the model at test time is an aggregation of a distribution over models, hence the variance in prediction (note with dropouts at test times too) can be treated as model variance.
+
+I use this variance as a sign of the model not being sure on the input with a threshold of .04
+
+After using the decision criteria, the results are the following
+
+| True Pos. | True Neg. | False Pos. | False Neg. |
+| :-----: | :-----: | :-----:| :-----:|
+| 99.8962 | 99.9886 | 0.0113 | 0.1037 |
+| 100.0   | 99.9884 | 0.0115 | 0.0    |
+| 100.0   | 99.9886 | 0.0113 | 0.0    |
+| 99.8996 | 100.0   | 0.0    | 0.1003 |
+| 99.8962 | 99.9773 | 0.0226 | 0.1037 |
+| 99.8859 | 99.9887 | 0.0112 | 0.1140 |
+| 99.7874 | 99.9887 | 0.0112 | 0.2125 |
+| 99.9002 | 99.9886 | 0.0113 | 0.0997 |
+| 99.8955 | 100.0   | 0.0    | 0.1044 |
+| 99.7952 | 99.9773 | 0.0226 | 0.2047 |
+| :-----: | :-----: | :-----:| :-----:|
+| 99.8956 | 99.9886 | 0.0113 | 0.1043 |
+| :-----: | :-----: | :-----:| :-----:|
+
+Left Out Percentage : 1.99%
+
+[1] https://www.kaggle.com/cdeotte/how-to-choose-cnn-architecture-mnist
+[2] http://mlg.eng.cam.ac.uk/yarin/thesis/thesis.pdf
+
+<!-- 
 # DATA DESCRIPTION
 
 The data file mnist.csv contains gray-scale images of hand-drawn digits,
@@ -62,4 +106,4 @@ Visually, if we omit the "pixel" prefix, the pixels make up the image like this:
 More details about the dataset, including algorithms that
 have been tried on it and their levels of success, can be found at
 http://yann.lecun.com/exdb/mnist/index.html. The dataset is made available
-under a Creative Commons Attribution-Share Alike 3.0 license.
+under a Creative Commons Attribution-Share Alike 3.0 license. -->
