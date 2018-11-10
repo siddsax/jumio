@@ -13,6 +13,7 @@ from sklearn.metrics import confusion_matrix
 from numpy import genfromtxt
 import argparse
 
+parser = argparse.ArgumentParser()
 parser.add_argument('--val', dest = 'val', type=int, default=1)
 args = parser.parse_args()
 
@@ -28,7 +29,7 @@ ct = 0
 j = 0
 for i in range(data.shape[0]):
     if ct >= 1000:
-        if ct >=1500 and args.val=1:
+        if ct >=1500 or args.val==0:
             train.append(i)
             ct = 0
             j+=1
@@ -56,4 +57,5 @@ if not os.path.exists('data'):
 
 np.save('data/mnistTr', trData)
 np.save('data/mnistTe', teData)
-np.save('data/mnistVl', vlData)
+if args.val:
+    np.save('data/mnistVl', vlData)
