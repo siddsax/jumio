@@ -46,6 +46,25 @@ class MNISTJ(torch.utils.data.Dataset):
         y = self.data[index, 0].type(typ2)
 
         return X, y
+
+class RandomShift(object):
+    def __init__(self, shift):
+        self.shift = shift
+        
+    @staticmethod
+    def get_params(shift):
+        """Get parameters for ``rotate`` for a random rotation.
+        Returns:
+            sequence: params to be passed to ``rotate`` for random rotation.
+        """
+        hshift, vshift = np.random.uniform(-shift, shift, size=2)
+
+        return hshift, vshift 
+    def __call__(self, img):
+        hshift, vshift = self.get_params(self.shift)
+        
+        return img.transform(img.size, Image.AFFINE, (1,0,hshift,0,1,vshift), resample=Image.BICUBIC, fill=1)
+
 def getData(args):
 
     # train_loader = torch.utils.data.DataLoader(
@@ -61,6 +80,8 @@ def getData(args):
                                 MNISTJ(args.dataPath, train=True,
                                 transform=torchvision.transforms.Compose([
                                 torchvision.transforms.ToTensor(),
+                                torchvision.transforms.RandomRotation(degrees=20), 
+                                RandomShift(3),
                                 torchvision.transforms.Normalize(
                                     (0.1307,), (0.3081,))
                                 ])),

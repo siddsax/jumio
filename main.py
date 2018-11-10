@@ -36,7 +36,7 @@ if not os.path.exists(args.modelStorePath):
 
 train_loader, test_loader = getData(args)
 
-network = Net()
+network = Net3()
 if args.train==0 or args.loadModel:
   network.load_state_dict(torch.load(args.modelStorePath + '/model.pt'))
 
