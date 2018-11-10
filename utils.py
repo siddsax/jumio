@@ -16,13 +16,15 @@ from numpy import genfromtxt
 
 class MNISTJ(torch.utils.data.Dataset):
 
-  def __init__(self, dataPath, transform=None, train=True):
+  def __init__(self, dataPath, transform=None, train=True, val=False):
         'Initialization'
         self.dataPath = dataPath
         self.transform = transform
         self.train = train
 
         if train:
+            self.data = torch.from_numpy(np.load(dataPath + '/mnistTr.npy'))
+        elif val:
             self.data = torch.from_numpy(np.load(dataPath + '/mnistTr.npy'))
         else:
             self.data = torch.from_numpy(np.load(dataPath + '/mnistTe.npy'))
@@ -87,6 +89,17 @@ def getData(args):
                                 ])),
     batch_size=args.batchSize, shuffle=True)
 
+    val_loader = torch.utils.data.DataLoader(
+                                MNISTJ(args.dataPath, train=False, val=True, 
+                                transform=torchvision.transforms.Compose([
+                                torchvision.transforms.ToTensor(),
+                                torchvision.transforms.RandomRotation(degrees=20), 
+                                RandomShift(3),
+                                torchvision.transforms.Normalize(
+                                    (0.1307,), (0.3081,))
+                                ])),
+    batch_size=args.batchSize, shuffle=True)
+
     test_loader = torch.utils.data.DataLoader(
                                 MNISTJ(args.dataPath, train=False,
                                 transform=torchvision.transforms.Compose([
@@ -96,7 +109,7 @@ def getData(args):
                                 ])),
     batch_size=1000, shuffle=True)
 
-    return train_loader, test_loader
+    return train_loader, val_loader, test_loader
 
 def prettyPrint(epoch, batch_idx, batchSize, train_loader, loss):
 

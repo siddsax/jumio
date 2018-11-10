@@ -25,6 +25,7 @@ parser.add_argument('--tr', dest = 'train', type=int, default=20)
 parser.add_argument('--lm', dest = 'loadModel', type=int, default=0)
 parser.add_argument('--m', dest = 'model', type=int, default=2)
 parser.add_argument('--pt', dest = 'pThresh', type=float, default=.5)
+parser.add_argument('--vl', dest = 'val', type=int, default=1)
 
 
 
@@ -38,7 +39,7 @@ torch.manual_seed(random_seed)
 if not os.path.exists(args.modelStorePath):
     os.makedirs(args.modelStorePath)
 
-train_loader, test_loader = getData(args)
+train_loader, val_loader, test_loader = getData(args)
 
 if args.model == 1:
     network = Net1()
@@ -77,11 +78,11 @@ def train(epoch):
 
     # break
 
-def test(epoch, bestFP):
+def test(epoch, bestFP, data_loader):
   network.eval()
   test_loss, correct, outputAll, targetAll = 0, 0, [], []
   with torch.no_grad():
-    for data, target in test_loader:
+    for data, target in data_loader:
       output = network(data)
       test_loss += F.nll_loss(output, target, size_average=False).item()
       pred = output.data.max(1, keepdim=True)[1]
@@ -90,8 +91,8 @@ def test(epoch, bestFP):
       outputAll.append(predHot(output))
       targetAll.append(np.eye(10)[target.data.cpu().numpy()])
 
-  test_loss /= len(test_loader.dataset)
-  falsePos = prettyPrint2(test_loss, correct, len(test_loader.dataset), np.concatenate(outputAll, axis=0), np.concatenate(targetAll, axis=0))
+  test_loss /= len(data_loader.dataset)
+  falsePos = prettyPrint2(test_loss, correct, len(data_loader.dataset), np.concatenate(outputAll, axis=0), np.concatenate(targetAll, axis=0))
   test_losses.append(test_loss)
   test_counter.append(epoch*len(train_loader.dataset))
   makeCF(np.concatenate(targetAll, axis=0), np.concatenate(outputAll, axis=0))
@@ -104,9 +105,9 @@ def test(epoch, bestFP):
   return bestFP
 
 
-def decision():
+def decision(data_loader):
     finOutAll, finTarAll, finleft, finpred, lO = [], [], [], [], 0
-    for data, target in test_loader:
+    for data, target in data_loader:
       outs = []
       for i in range(args.numSamp):
         outs.append(network(data, decision=1).view(1, -1, 10).data.cpu().numpy())
@@ -126,7 +127,7 @@ def decision():
       predicted = []
 
       for ind, (i,j) in enumerate(zip(out, target)):
-        if outV[ind, i] < args.varThresh and outM[ind, i] > args.pThresh:
+        if outV[ind, i] < args.varThresh:# and outM[ind, i] > args.pThresh:
         # if outM[ind, i] > .5:
 
           finOut.append(i)
@@ -153,7 +154,7 @@ def decision():
       finpred.append(predicted)
       
     ratesMC(np.concatenate(finOutAll, axis=0), np.concatenate(finTarAll, axis=0))
-    print("Coverage = " + str(100 - float((100.0*lO)/len(test_loader.dataset))))
+    print("Coverage = " + str(100 - float((100.0*lO)/len(data_loader.dataset))))
     np.save('leftOut', np.array(finleft))
     np.save('predicted', np.array(finpred))
 
@@ -162,8 +163,14 @@ bestFP = float('inf')
 if args.train:
   for epoch in range(1, args.n_epochs + 1):
     train(epoch)
-    bestFP = test(epoch, bestFP)
+    if args.val == 1:
+      bestFP = test(epoch, bestFP, val_loader)
+    else:
+      bestFP = test(epoch, bestFP, test_loader)
     genMyPlots(train_losses, test_losses, train_counter, test_counter)
 
 else:
-  decision()
+  if args.val == 1:
+    decision(val_loader)
+  else:
+    decision(test_loader)

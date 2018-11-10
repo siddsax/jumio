@@ -19,13 +19,21 @@ data = data[data[:,0].argsort()]
 
 test = []
 train = []
+val = []
 ct = 0
 j = 0
 for i in range(data.shape[0]):
     if ct >= 1000:
-        ct = 0
-        j+=1
-        train.append(i)
+        if ct >=1500:
+            train.append(i)
+            ct = 0
+            j+=1
+        else:
+            if j == data[i, 0]:
+                val.append(i)
+                ct += 1
+            else:
+                train.append(i)
     else:
         if j == data[i, 0]:
             test.append(i)
@@ -36,7 +44,9 @@ for i in range(data.shape[0]):
 
 trData = data[train, :]
 teData = data[test, :]
+vlData = data[val, :]
 
 
 np.save('mnistTr', trData)
 np.save('mnistTe', teData)
+np.save('mnistVl', vlData)
