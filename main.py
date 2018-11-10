@@ -176,11 +176,11 @@ if args.train:
 else:
   if args.val == 1:
     print("========== W/O Decision-making  ===============")
-    test(0, 0)
+    test(0, 0, val_loader)
     print("========== With Decision-making ===============")
     decision(val_loader)
   else:
     print("========== W/O Decision-making  ===============")
-    test(0, 0)
+    test(0, 0, test_loader)
     print("========== With Decision-making ===============")
     decision(test_loader)
