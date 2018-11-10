@@ -90,7 +90,7 @@ Parameters:
 Example 
 
 
-```ash
+```bash
 python main # train a model with default paramters
 ```
 
