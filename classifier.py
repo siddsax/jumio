@@ -22,7 +22,7 @@ import os
 
 class Net1(nn.Module):
     def __init__(self):
-        super(Net1, self).__init__()
+        super(Net1, self, drp).__init__()
         self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
         self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
         self.conv2_drop = nn.Dropout2d()
@@ -39,7 +39,7 @@ class Net1(nn.Module):
         return F.log_softmax(x)
 
 class Net2(nn.Module):
-    def __init__(self):
+    def __init__(self, drp):
         super(Net2, self).__init__()
         self.conv1 = nn.Conv2d(1, 32, kernel_size=3)
         self.bn1 = nn.BatchNorm2d(32)
@@ -47,7 +47,7 @@ class Net2(nn.Module):
         self.bn2 = nn.BatchNorm2d(32)
         self.conv3 = nn.Conv2d(32, 32, kernel_size=5, stride=2)
         self.bn3 = nn.BatchNorm2d(32)
-        self.conv2_drop = nn.Dropout2d(0.4)
+        self.conv2_drop = nn.Dropout2d(drp)
 
         self.conv4 = nn.Conv2d(32, 64, kernel_size=3)
         self.bn4 = nn.BatchNorm2d(64)
@@ -58,7 +58,7 @@ class Net2(nn.Module):
 
         self.fc1 = nn.Linear(64,128)
         self.bn7 = nn.BatchNorm1d(128)
-        self.fc_drop = nn.Dropout(.4)
+        self.fc_drop = nn.Dropout(drp)
         self.fc2 = nn.Linear(128, 10)
 
     def forward(self, x, decision=0):
@@ -95,7 +95,7 @@ class Net2(nn.Module):
 
 class Net3(nn.Module):
     def __init__(self):
-        super(Net3, self).__init__()
+        super(Net3, self, drp).__init__()
         self.conv1 = nn.Conv2d(1, 32, kernel_size=5)
         self.conv2 = nn.Conv2d(32, 32, kernel_size=5)
         self.pool3 = nn.MaxPool2d(kernel_size=2)
