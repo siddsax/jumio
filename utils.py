@@ -127,21 +127,24 @@ def prettyPrint2(test_loss, correct, testSize, output, target):
 
     return allRates[:,2].mean()
 def rates(pred_labels, true_labels):
-  TP = 100*np.sum(np.logical_and(pred_labels == 1, true_labels == 1))/(1.0*np.sum(true_labels))
-  TN = 100*np.sum(np.logical_and(pred_labels == 0, true_labels == 0))/(-1.0*np.sum(true_labels-1))
-  FP = 100*np.sum(np.logical_and(pred_labels == 1, true_labels == 0))/(-1.0*np.sum(true_labels-1))
-  FN = 100*np.sum(np.logical_and(pred_labels == 0, true_labels == 1))/(1.0*np.sum(true_labels))
+  TP = np.sum(np.logical_and(pred_labels == 1, true_labels == 1))
+  TN = np.sum(np.logical_and(pred_labels == 0, true_labels == 0))
+  FP = np.sum(np.logical_and(pred_labels == 1, true_labels == 0))
+  FN = np.sum(np.logical_and(pred_labels == 0, true_labels == 1))
 
-  return [TP, TN, FP, FN]
+  TPR = (100.0*TP)/(TP+FN)
+  FPR = (100.0*FP)/(FP+TN)
+
+  return [TPR, FPR]
 def ratesMC(pred_labels, true_labels):
     allRates = []
     n = pred_labels.shape[0]
-    name = ['True Pos.', 'True Neg.', 'False Pos.', 'False Neg']
+    name = ['True Pos.', 'False Pos.']
     for i in range(10):
         allRates.append(rates(pred_labels[:,i], true_labels[:,i]))
 
         out = ""
-        for j in range(4):
+        for j in range(2):
             try:
                 out += " " + name[j] + ": " + str(allRates[i][j])
             except:
@@ -152,7 +155,7 @@ def ratesMC(pred_labels, true_labels):
     
     allRates = np.array(allRates)
     out = "=========== MEAN ==============\n"
-    for j in range(4):
+    for j in range(2):
         out += " " + name[j] + ": " + str(allRates[:,j].mean())
     print(out)
     return allRates
