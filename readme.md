@@ -3,7 +3,7 @@
 The task is to predict mnist digits, while trying to minimize the false positive rates by using a decision mechanism that says 'not sure' for data points its not sure.
 
 ![alt text](CF.png)
-Confusion Matrix
+**Confusion Matrix**
 
 The basic model is a cnn based upon [1]. It consists of 3 blocks of convolutions, each block having the same number of filters. Summarized as 
 
@@ -38,12 +38,14 @@ Class | True Pos. | True Neg. | False Pos. | False Neg. |
    7  | 99.4    | 99.85   | 0.14    | 0.6  |
    8  | 99.2    | 99.91   | 0.09    | 0.7  |
    9  | 99.9    | 99.92   | 0.08    | 2.1  |
- Mean | 99.36   | 99.93   | 0.07    | 0.64 |
+ **Mean** | **99.36**   | **99.93**   | **0.07**    | **0.64** |
 
 
-The second part of the task is to reduce the false negative rate, by not predicting some of the data points based on a criteria. I use bayesian CNN for this part as proposed in [2]. In this work Gal et al. proposed that dropouts can be interpretted as an ensemble of several models while testing whereas each configuration being one model while training. This leads to the fact that the prediction of the model at test time is an aggregation of a distribution over models, hence the variance in prediction (note with dropouts at test times too) can be treated as model variance.
+The second part of the task is to reduce the false negative rate, by not predicting some of the data points based on a criteria. I employed two techniques to achieve this.
 
-I use this variance as a sign of the model not being sure on the input with a threshold of .04
+a) **Bayesian CNN** as proposed in [2]. In this work Gal et al. proposed that dropouts can be interpretted as an ensemble of several models while testing whereas each configuration being one model while training. This leads to the fact that the prediction of the model at test time is an aggregation of a distribution over models, hence the variance in prediction (note with dropouts at test times too) can be treated as model variance. I use this variance as a sign of the model not being sure on the input with a threshold of .014
+
+b) **Low probabilities** If the model predicted an output with probability less than .5, then as well I  discarded that as the model being not sure as this means the model is giving high probability to another class as well.
 
 After using the decision criteria, the results are the following
 
@@ -59,9 +61,9 @@ Class | True Pos. | True Neg. | False Pos. | False Neg. |
   7   | 100.0   | 99.98   | 0.023  | 0.0    |
   8   | 99.78   | 99.98   | 0.023  | 0.21   |
   9   | 99.67   | 99.98   | 0.022  | 0.33   |
- Mean | 99.87   | 99.985  | 0.014  | 0.12   |
+ **Mean** | **99.87**   | **99.985**  | **0.014**  | **0.12**  |
 
-Coverage Percentage : 93.09%
+**Coverage Percentage : 93.09%**
 
 To run the code, follow these steps:
 
