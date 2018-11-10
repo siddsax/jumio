@@ -46,7 +46,10 @@ trData = data[train, :]
 teData = data[test, :]
 vlData = data[val, :]
 
+if not os.path.exists('data'):
+    os.makedirs('data')
 
-np.save('mnistTr', trData)
-np.save('mnistTe', teData)
-np.save('mnistVl', vlData)
+
+np.save('data/mnistTr', trData)
+np.save('data/mnistTe', teData)
+np.save('data/mnistVl', vlData)

@@ -66,22 +66,32 @@ Coverage Percentage : 98.01%
 To run the code, follow these steps:
 
 ''bash
-python main [--tr] [--n_epochs] [--logInt] [--momentum] [--lr] [--batchSize] [--dataPath] [--msp] [--vt] [--ns]
+python main [--tr] [--n_epochs] [--logInt] [--momentum] [--lr] [--batchSize] [--dataPath] [--msp] [--vt] [--ns] [--lm] [--pt] [--vl] [--m] [--d]
 ''
 Parameters:
 * tr : 0 means use decision-making to get results. 1 (default) means train normal model
 * msp : path to saved model
 * vt : threshold for decision-making function
 * ns : number of samples for decision-making
+* pt : threshold for probabilities of sigmoid
+* lm : load last train model of corresponding network
+* m : network number. Default is 2 which gives best performance
+* vl : to use validation set or not. Default 1
+* d : dropout value
 * others are self-explanatory, not to be changed generally 
 
 Example 
+
 ''bash
-python main 
+python helperMNIST.py # creates test, validation, train set from .csv file and saves in data folder
 ''
 
 ''bash
-python main --tr=1
+python main # train a model with default paramters
+''
+
+''bash
+python main --ns=500 --t=0 --vt=.014 # use large value of ns only on GPU, will be slow on cpu
 ''
 
 [1] https://www.kaggle.com/cdeotte/how-to-choose-cnn-architecture-mnist
