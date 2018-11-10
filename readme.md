@@ -28,17 +28,18 @@ This leads to the following scores.
 
 Class | True Pos. | True Neg. | False Pos. | False Neg. |
 ------|---------|---------|--------|--------|
-   0  | 99.5918 | 99.9778 | 0.0221 | 0.4081 |
-   1  | 99.9118 | 99.9435 | 0.0564 | 0.0881 |
-   2  | 99.6124 | 99.8773 | 0.1226 | 0.3875 |
-   3  | 99.6039 | 99.9221 | 0.0778 | 0.3960 |
-   4  | 99.7963 | 99.9556 | 0.0443 | 0.2036 |
-   5  | 99.1031 | 99.9451 | 0.0548 | 0.8968 |
-   6  | 99.2693 | 99.9668 | 0.0331 | 0.7306 |
-   7  | 99.2217 | 99.9331 | 0.0668 | 0.7782 |
-   8  | 99.5893 | 100.0   | 0.0    | 0.4106 |
-   9  | 99.5105 | 99.9465 | 0.0534 | 0.4894 |
- Mean | 99.4053 | 99.9443 | 0.0556 | 0.5946 |
+   0  | 99.8    | 99.99   | 0.01    | 0.2  |
+   1  | 99.7    | 99.97   | 0.03    | 0.3  |
+   2  | 99.5    | 99.91   | 0.09    | 0.5  |
+   3  | 99.2    | 99.98   | 0.02    | 0.8  |
+   4  | 99.2    | 99.87   | 0.13    | 0.8  |
+   5  | 99.9    | 99.95   | 0.04    | 0.1  |
+   6  | 99.7    | 99.93   | 0.07    | 0.3  |
+   7  | 99.4    | 99.85   | 0.14    | 0.6  |
+   8  | 99.2    | 99.91   | 0.09    | 0.7  |
+   9  | 99.9    | 99.92   | 0.08    | 2.1  |
+ Mean | 99.36   | 99.93   | 0.07    | 0.64 |
+
 
 The second part of the task is to reduce the false negative rate, by not predicting some of the data points based on a criteria. I use bayesian CNN for this part as proposed in [2]. In this work Gal et al. proposed that dropouts can be interpretted as an ensemble of several models while testing whereas each configuration being one model while training. This leads to the fact that the prediction of the model at test time is an aggregation of a distribution over models, hence the variance in prediction (note with dropouts at test times too) can be treated as model variance.
 
@@ -48,23 +49,28 @@ After using the decision criteria, the results are the following
 
 Class | True Pos. | True Neg. | False Pos. | False Neg. |
 ------|---------|---------|--------|--------|
-  0   | 99.8962 | 99.9886 | 0.0113 | 0.1037 |
-  1   | 100.0   | 99.9884 | 0.0115 | 0.0    |
-  2   | 100.0   | 99.9886 | 0.0113 | 0.0    |
-  3   | 99.8996 | 100.0   | 0.0    | 0.1003 |
-  4   | 99.8962 | 99.9773 | 0.0226 | 0.1037 |
-  5   | 99.8859 | 99.9887 | 0.0112 | 0.1140 |
-  6   | 99.7874 | 99.9887 | 0.0112 | 0.2125 |
-  7   | 99.9002 | 99.9886 | 0.0113 | 0.0997 |
-  8   | 99.8955 | 100.0   | 0.0    | 0.1044 |
-  9   | 99.7952 | 99.9773 | 0.0226 | 0.2047 |
-Mean  | 99.8956 | 99.9886 | 0.0113 | 0.1043 |
+  0   | 100.0   | 99.9886 | 0.01   | 0.0    |
+  2   | 99.89   | 100.0   | 0.0    | 0.0    |
+  1   | 100.0   | 100.0   | 0.0    | 0.10   |
+  3   | 99.89   | 100.0   | 0.0    | 0.10   |
+  4   | 99.78   | 99.96   | 0.035  | 0.21   |
+  5   | 99.88   | 100.0   | 0.035  | 0.11   |
+  6   | 99.78   | 99.98   | 0.0    | 0.21   |
+  7   | 100.0   | 99.98   | 0.023  | 0.0    |
+  8   | 99.78   | 99.98   | 0.023  | 0.21   |
+  9   | 99.67   | 99.98   | 0.022  | 0.33   |
+ Mean | 99.87   | 99.985  | 0.023  | 0.12   |
 
-Coverage Percentage : 98.01%
-
+Coverage Percentage : 93.09%
 
 To run the code, follow these steps:
 
+* Save the dataset in train.csv in the same directory
+
+''bash
+python helperMNIST.py [--val 0/1] # creates test, validation (if val=1), train set from .csv file and saves in data folder
+''
+ 
 ''bash
 python main [--tr] [--n_epochs] [--logInt] [--momentum] [--lr] [--batchSize] [--dataPath] [--msp] [--vt] [--ns] [--lm] [--pt] [--vl] [--m] [--d]
 ''
@@ -82,9 +88,6 @@ Parameters:
 
 Example 
 
-''bash
-python helperMNIST.py # creates test, validation, train set from .csv file and saves in data folder
-''
 
 ''bash
 python main # train a model with default paramters
