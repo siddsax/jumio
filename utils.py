@@ -25,7 +25,10 @@ class MNISTJ(torch.utils.data.Dataset):
         if train:
             self.data = torch.from_numpy(np.load(dataPath + '/mnistTr.npy'))
         elif val:
-            self.data = torch.from_numpy(np.load(dataPath + '/mnistTr.npy'))
+            try:
+                self.data = torch.from_numpy(np.load(dataPath + '/mnistVl.npy'))
+            except:
+                self.data = torch.from_numpy(np.load(dataPath + '/mnistTe.npy'))
         else:
             self.data = torch.from_numpy(np.load(dataPath + '/mnistTe.npy'))
 
@@ -93,12 +96,10 @@ def getData(args):
                                 MNISTJ(args.dataPath, train=False, val=True, 
                                 transform=torchvision.transforms.Compose([
                                 torchvision.transforms.ToTensor(),
-                                torchvision.transforms.RandomRotation(degrees=20), 
-                                RandomShift(3),
                                 torchvision.transforms.Normalize(
                                     (0.1307,), (0.3081,))
                                 ])),
-    batch_size=args.batchSize, shuffle=True)
+    batch_size=1000, shuffle=True)
 
     test_loader = torch.utils.data.DataLoader(
                                 MNISTJ(args.dataPath, train=False,

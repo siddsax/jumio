@@ -143,14 +143,14 @@ def decision(data_loader):
       
         # if outM[ind, i] < .5:
         
-        if i!=j:
-          if ind in predicted:
-            print(outM[ind, i])
-            print("----------------")
+        #if i!=j:
+        #  if ind in predicted:
+        #    print(outM[ind, i])
+        #    print("----------------")
 
-            for k, p in zip(outV[ind].tolist(), outM[ind].tolist()):
-              print(k, p)
-            print(j)
+        #    for k, p in zip(outV[ind].tolist(), outM[ind].tolist()):
+        #      print(k, p)
+        #    print(j)
 
       finOutAll.append(np.eye(10)[finOut])
       finTarAll.append(np.eye(10)[finTar])
@@ -164,6 +164,9 @@ def decision(data_loader):
 
 
 bestFP = float('inf')
+
+
+
 if args.train:
   for epoch in range(1, args.n_epochs + 1):
     train(epoch)
@@ -176,11 +179,11 @@ if args.train:
 else:
   if args.val == 1:
     print("========== W/O Decision-making  ===============")
-    test(0, 0)
+    test(0, 0, val_loader)
     print("========== With Decision-making ===============")
     decision(val_loader)
   else:
     print("========== W/O Decision-making  ===============")
-    test(0, 0)
+    test(0, 0, test_loader)
     print("========== With Decision-making ===============")
     decision(test_loader)
