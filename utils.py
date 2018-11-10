@@ -10,11 +10,55 @@ import numpy as np
 import seaborn as sn
 import pandas as pd
 from sklearn.metrics import confusion_matrix
+from numpy import genfromtxt
 
+
+
+class MNISTJ(torch.utils.data.Dataset):
+
+  def __init__(self, dataPath, transform=None, train=True):
+        'Initialization'
+        self.dataPath = dataPath
+        self.transform = transform
+        self.train = train
+
+        if train:
+            self.data = torch.from_numpy(np.load('mnistTr.npy'))
+        else:
+            self.data = torch.from_numpy(np.load('mnistTe.npy'))
+
+        # import pdb
+        # pdb.set_trace()
+
+  def __len__(self):
+        'Denotes the total number of samples'
+        return self.data.shape[0]
+
+  def __getitem__(self, index):
+        if torch.cuda.is_available():
+            typ = torch.cuda.FloatTensor
+            typ2 = torch.cuda.LongTensor
+        else:
+            typ = torch.FloatTensor
+            typ2 = torch.LongTensor
+
+        X = self.data[index, 1:].view(1, 28, 28).type(typ)
+        y = self.data[index, 0].type(typ2)
+
+        return X, y
 def getData(args):
 
+    # train_loader = torch.utils.data.DataLoader(
+    # torchvision.datasets.MNIST(args.dataPath, train=True, download=True,
+    #                             transform=torchvision.transforms.Compose([
+    #                             torchvision.transforms.ToTensor(),
+    #                             torchvision.transforms.Normalize(
+    #                                 (0.1307,), (0.3081,))
+    #                             ])),
+    # batch_size=args.batchSize, shuffle=True)
+
     train_loader = torch.utils.data.DataLoader(
-    torchvision.datasets.MNIST(args.dataPath, train=True, download=True,
+                                MNISTJ(args.dataPath, train=True,
                                 transform=torchvision.transforms.Compose([
                                 torchvision.transforms.ToTensor(),
                                 torchvision.transforms.Normalize(
@@ -23,7 +67,7 @@ def getData(args):
     batch_size=args.batchSize, shuffle=True)
 
     test_loader = torch.utils.data.DataLoader(
-    torchvision.datasets.MNIST(args.dataPath, train=False, download=True,
+                                MNISTJ(args.dataPath, train=False,
                                 transform=torchvision.transforms.Compose([
                                 torchvision.transforms.ToTensor(),
                                 torchvision.transforms.Normalize(

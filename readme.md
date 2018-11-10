@@ -60,7 +60,29 @@ Class | True Pos. | True Neg. | False Pos. | False Neg. |
   9   | 99.7952 | 99.9773 | 0.0226 | 0.2047 |
 Mean  | 99.8956 | 99.9886 | 0.0113 | 0.1043 |
 
-Left Out Percentage : 1.99%
+Coverage Percentage : 98.01%
+
+
+To run the code, follow these steps:
+
+''bash
+python main [--tr] [--n_epochs] [--logInt] [--momentum] [--lr] [--batchSize] [--dataPath] [--msp] [--vt] [--ns]
+''
+Parameters:
+* tr : 0 means use decision-making to get results. 1 (default) means train normal model
+* msp : path to saved model
+* vt : threshold for decision-making function
+* ns : number of samples for decision-making
+* others are self-explanatory, not to be changed generally 
+
+Example 
+''bash
+python main 
+''
+
+''bash
+python main --tr=1
+''
 
 [1] https://www.kaggle.com/cdeotte/how-to-choose-cnn-architecture-mnist
 

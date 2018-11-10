@@ -12,7 +12,7 @@ from utils import *
 from classifier import *
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--n_epochs', type=int, default=100)
+parser.add_argument('--n_epochs', type=int, default=30)
 parser.add_argument('--logInt', type=int, default=10)
 parser.add_argument('--momentum', type=float, default=.5)
 parser.add_argument('--lr', type=float, default=1e-2)
@@ -22,6 +22,8 @@ parser.add_argument('--msp', dest = 'modelStorePath', type=str, default="savedMo
 parser.add_argument('--vt', dest = 'varThresh', type=float, default=.1)
 parser.add_argument('--ns', dest = 'numSamp', type=int, default=20)
 parser.add_argument('--tr', dest = 'train', type=int, default=20)
+parser.add_argument('--lm', dest = 'loadModel', type=int, default=0)
+
 
 args = parser.parse_args()
 print(args)
@@ -35,7 +37,8 @@ if not os.path.exists(args.modelStorePath):
 train_loader, test_loader = getData(args)
 
 network = Net()
-network.load_state_dict(torch.load(args.modelStorePath + '/model.pt'))
+if args.train==0 or args.loadModel:
+  network.load_state_dict(torch.load(args.modelStorePath + '/model.pt'))
 
 optimizer = optim.SGD(network.parameters(), lr=args.lr, momentum=args.momentum)
 
@@ -85,8 +88,9 @@ def test(epoch, bestFP):
 
   return bestFP
 
+
 def decision():
-    finOutAll, finTarAll, lO = [], [], 0
+    finOutAll, finTarAll, finleft, finpred, lO = [], [], [], [], 0
     for data, target in test_loader:
       outs = []
       for i in range(args.numSamp):
@@ -103,18 +107,40 @@ def decision():
 
       finOut = []
       finTar = []
+      leftOut = []
+      predicted = []
+
       for ind, (i,j) in enumerate(zip(out, target)):
-        if outV[ind, i] < args.varThresh:
+        if outV[ind, i] < args.varThresh and outM[ind, i] > .5:
+        # if outM[ind, i] > .5:
+
           finOut.append(i)
           finTar.append(j)
+          predicted.append(ind)
         else:
           lO += 1
+          leftOut.append(ind)
       
+        # if outM[ind, i] < .5:
+        
+        if i!=j:
+          if ind in predicted:
+            print(outM[ind, i])
+            print("----------------")
+
+            for k, p in zip(outV[ind].tolist(), outM[ind].tolist()):
+              print(k, p)
+            print(j)
+
       finOutAll.append(np.eye(10)[finOut])
       finTarAll.append(np.eye(10)[finTar])
-      print(lO)
+      finleft.append(leftOut)
+      finpred.append(predicted)
+      
     ratesMC(np.concatenate(finOutAll, axis=0), np.concatenate(finTarAll, axis=0))
-    print("Left Out = " + str(float((100.0*lO)/len(test_loader.dataset))))
+    print("Coverage = " + str(100 - float((100.0*lO)/len(test_loader.dataset))))
+    np.save('leftOut', np.array(finleft))
+    np.save('predicted', np.array(finpred))
 
 
 bestFP = float('inf')
