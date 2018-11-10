@@ -27,6 +27,7 @@ parser.add_argument('--m', dest = 'model', type=int, default=2)
 parser.add_argument('--pt', dest = 'pThresh', type=float, default=.5)
 parser.add_argument('--vl', dest = 'val', type=int, default=1)
 
+parser.add_argument('--d', dest = 'drp', type=float, default=.4)
 
 
 
@@ -41,12 +42,15 @@ if not os.path.exists(args.modelStorePath):
 
 train_loader, val_loader, test_loader = getData(args)
 
+if args.train == 0:
+    args.drp = .5
+
 if args.model == 1:
-    network = Net1()
+    network = Net1(args.drp)
 elif args.model == 2:
-    network = Net2()
+    network = Net2(args.drp)
 elif args.model == 3:
-    network = Net3()
+    network = Net3(args.drp)
 else:
     print("Error, wrong model specified")
     exit()
@@ -171,6 +175,12 @@ if args.train:
 
 else:
   if args.val == 1:
+    print("========== W/O Decision-making  ===============")
+    test(0, 0)
+    print("========== With Decision-making ===============")
     decision(val_loader)
   else:
+    print("========== W/O Decision-making  ===============")
+    test(0, 0)
+    print("========== With Decision-making ===============")
     decision(test_loader)
