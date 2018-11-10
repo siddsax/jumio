@@ -72,7 +72,7 @@ python helperMNIST.py [--val 0/1] # creates test, validation (if val=1), train s
 ```
  
 ```bash
-python main [--tr] [--n_epochs] [--logInt] [--momentum] [--lr] [--batchSize] [--dataPath] [--msp] [--vt] [--ns] [--lm] [--pt] [--vl] [--m] [--d]
+python main.py [--tr] [--n_epochs] [--logInt] [--momentum] [--lr] [--batchSize] [--dataPath] [--msp] [--vt] [--ns] [--lm] [--pt] [--vl] [--m] [--d]
 ```
 
 Parameters:
