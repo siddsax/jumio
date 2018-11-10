@@ -23,6 +23,10 @@ parser.add_argument('--vt', dest = 'varThresh', type=float, default=.1)
 parser.add_argument('--ns', dest = 'numSamp', type=int, default=20)
 parser.add_argument('--tr', dest = 'train', type=int, default=20)
 parser.add_argument('--lm', dest = 'loadModel', type=int, default=0)
+parser.add_argument('--m', dest = 'model', type=int, default=2)
+parser.add_argument('--pt', dest = 'pThresh', type=float, default=.5)
+
+
 
 
 args = parser.parse_args()
@@ -36,9 +40,20 @@ if not os.path.exists(args.modelStorePath):
 
 train_loader, test_loader = getData(args)
 
-network = Net3()
+if args.model == 1:
+    network = Net1()
+elif args.model == 2:
+    network = Net2()
+elif args.model == 3:
+    network = Net3()
+else:
+    print("Error, wrong model specified")
+    exit()
+
+if torch.cuda.is_available():
+    network = network.cuda()
 if args.train==0 or args.loadModel:
-  network.load_state_dict(torch.load(args.modelStorePath + '/model.pt'))
+  network.load_state_dict(torch.load(args.modelStorePath + '/model' + '_' + str(args.model) + '.pt'))
 
 optimizer = optim.SGD(network.parameters(), lr=args.lr, momentum=args.momentum)
 
@@ -83,7 +98,7 @@ def test(epoch, bestFP):
 
   if falsePos < bestFP:
     bestFP = falsePos
-    torch.save(network.state_dict(), args.modelStorePath + '/model.pt')
+    torch.save(network.state_dict(), args.modelStorePath + '/model_' + str(args.model) + '.pt')
     print("---------------------SAVED------------------")
 
   return bestFP
@@ -111,7 +126,7 @@ def decision():
       predicted = []
 
       for ind, (i,j) in enumerate(zip(out, target)):
-        if outV[ind, i] < args.varThresh and outM[ind, i] > .5:
+        if outV[ind, i] < args.varThresh and outM[ind, i] > args.pThresh:
         # if outM[ind, i] > .5:
 
           finOut.append(i)

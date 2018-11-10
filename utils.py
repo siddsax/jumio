@@ -23,9 +23,9 @@ class MNISTJ(torch.utils.data.Dataset):
         self.train = train
 
         if train:
-            self.data = torch.from_numpy(np.load('mnistTr.npy'))
+            self.data = torch.from_numpy(np.load(dataPath + '/mnistTr.npy'))
         else:
-            self.data = torch.from_numpy(np.load('mnistTe.npy'))
+            self.data = torch.from_numpy(np.load(dataPath + '/mnistTe.npy'))
 
         # import pdb
         # pdb.set_trace()
