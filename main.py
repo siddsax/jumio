@@ -62,7 +62,10 @@ print(network)
 if torch.cuda.is_available():
     network = network.cuda()
 if args.train==0 or args.loadModel:
-  network.load_state_dict(torch.load(args.modelStorePath + '/model' + '_' + str(args.model) + '.pt'))
+    if torch.cuda.is_available():
+        network.load_state_dict(torch.load(args.modelStorePath + '/model' + '_' + str(args.model) + '.pt'))
+    else:
+        network.load_state_dict(torch.load(args.modelStorePath + '/model' + '_' + str(args.model) + '.pt', map_location=lambda storage, loc: storage))
 
 optimizer = optim.SGD(network.parameters(), lr=args.lr, momentum=args.momentum)
 
