@@ -125,7 +125,7 @@ def prettyPrint2(test_loss, correct, testSize, output, target):
 
     allRates = np.array(ratesMC(output, target))
 
-    return allRates[:,2].mean()
+    return allRates[:,1].mean()
 def rates(pred_labels, true_labels):
   TP = np.sum(np.logical_and(pred_labels == 1, true_labels == 1))
   TN = np.sum(np.logical_and(pred_labels == 0, true_labels == 0))

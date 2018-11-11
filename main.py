@@ -131,7 +131,7 @@ def decision(data_loader):
       predicted = []
 
       for ind, (i,j) in enumerate(zip(out, target)):
-        if outV[ind, i] < args.varThresh:# and outM[ind, i] > args.pThresh:
+        if outV[ind, i] < args.varThresh and outM[ind, i] > args.pThresh:
         # if outM[ind, i] > .5:
 
           finOut.append(i)
@@ -145,12 +145,11 @@ def decision(data_loader):
         
         #if i!=j:
         #  if ind in predicted:
-        #    print(outM[ind, i])
+        #    print(outM[ind, i], j, i)
         #    print("----------------")
 
         #    for k, p in zip(outV[ind].tolist(), outM[ind].tolist()):
         #      print(k, p)
-        #    print(j)
 
       finOutAll.append(np.eye(10)[finOut])
       finTarAll.append(np.eye(10)[finTar])
