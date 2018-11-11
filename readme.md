@@ -26,44 +26,43 @@ Each layer has batch-normalization
 
 This leads to the following scores.
 
-Class | True Pos. | True Neg. | False Pos. | False Neg. |
-------|---------|---------|--------|--------|
-   0  | 99.8    | 99.99   | 0.01    | 0.2  |
-   1  | 99.7    | 99.97   | 0.03    | 0.3  |
-   2  | 99.5    | 99.91   | 0.09    | 0.5  |
-   3  | 99.2    | 99.98   | 0.02    | 0.8  |
-   4  | 99.2    | 99.87   | 0.13    | 0.8  |
-   5  | 99.9    | 99.95   | 0.04    | 0.1  |
-   6  | 99.7    | 99.93   | 0.07    | 0.3  |
-   7  | 99.4    | 99.85   | 0.14    | 0.6  |
-   8  | 99.2    | 99.91   | 0.09    | 0.7  |
-   9  | 99.9    | 99.92   | 0.08    | 2.1  |
- **Mean** | **99.36**   | **99.93**   | **0.07**    | **0.64** |
-
+Class | True Pos. | False Pos. |
+------|---------|---------|
+   0  | 99.8    | 0.055  |
+   1  | 99.7    | 0.011  |
+   2  | 99.6    | 0.066  |
+   3  | 99.4    | 0.044  |
+   4  | 99.6    | 0.122  |
+   5  | 99.3    | 0.055  |
+   6  | 99.7    | 0.067  |
+   7  | 99.4    | 0.055  |
+   8  | 99.5    | 0.067  |
+   9  | 99.5    | 0.067  |
+ **Mean** | **99.45**  | **0.061** |
 
 The second part of the task is to reduce the false negative rate, by not predicting some of the data points based on a criteria. I employed two techniques to achieve this.
 
-a) **Bayesian CNN** as proposed in [2]. In this work Gal et al. proposed that dropouts can be interpretted as an ensemble of several models while testing whereas each configuration being one model while training. This leads to the fact that the prediction of the model at test time is an aggregation of a distribution over models, hence the variance in prediction (note with dropouts at test times too) can be treated as model variance. I use this variance as a sign of the model not being sure on the input with a threshold of .014
+a) **Bayesian CNN** as proposed in [2]. In this work Gal et al. proposed that dropouts can be interpretted as an ensemble of several models while testing whereas each configuration being one model while training. This leads to the fact that the prediction of the model at test time is an aggregation of a distribution over models, hence the variance in prediction (note with dropouts at test times too) can be treated as model variance. I use this variance as a sign of the model not being sure on the input with a threshold of .01 (set by validation)
 
-b) **Low probabilities** If the model predicted an output with probability less than .5, then as well I  discarded that as the model being not sure as this means the model is giving high probability to another class as well.
+b) **Low probabilities** If the model predicted an output with probability less than .975 (set by validation), then as well I  discarded that as the model being not sure as this means the model is giving high probability to another class as well.
 
 After using the decision criteria, the results are the following
 
-Class | True Pos. | True Neg. | False Pos. | False Neg. |
-------|---------|---------|--------|--------|
-  0   | 100.0   | 99.9886 | 0.01   | 0.0    |
-  2   | 99.89   | 100.0   | 0.0    | 0.0    |
-  1   | 100.0   | 100.0   | 0.0    | 0.10   |
-  3   | 99.89   | 100.0   | 0.0    | 0.10   |
-  4   | 99.78   | 99.96   | 0.035  | 0.21   |
-  5   | 99.88   | 100.0   | 0.035  | 0.11   |
-  6   | 99.78   | 99.98   | 0.0    | 0.21   |
-  7   | 100.0   | 99.98   | 0.023  | 0.0    |
-  8   | 99.78   | 99.98   | 0.023  | 0.21   |
-  9   | 99.67   | 99.98   | 0.022  | 0.33   |
- **Mean** | **99.87**   | **99.985**  | **0.014**  | **0.12**  |
+Class | True Pos. | False Pos. |
+------|---------|---------|
+  0   | 100.0   | 0.012  |
+  2   | 100.0   | 0.0   |
+  1   | 100.0   | 0.0   |
+  3   | 100.0   | 0.0   |
+  4   | 100.0   | 0.012 |
+  5   | 99.88   | 0.0 |
+  6   | 100.0   | 0.012   |
+  7   | 100.0   | 0.0 |
+  8   | 100.0   | 0.0 |
+  9   | 99.77   | 0.0 |
+ **Mean** | **99.96**   | **0.003**  |
 
-**Coverage Percentage : 93.09%**
+**Coverage Percentage : 91.18%**
 
 To run the code, follow these steps:
 
@@ -76,6 +75,8 @@ python helperMNIST.py [--val 0/1] # creates test, validation (if val=1), train s
 ```bash
 python main.py [--tr] [--n_epochs] [--logInt] [--momentum] [--lr] [--batchSize] [--dataPath] [--msp] [--vt] [--ns] [--lm] [--pt] [--vl] [--m] [--d]
 ```
+
+The models and data splits can be downloaded from [here](http://cse.iitk.ac.in/users/siddsax/jumio.zip) 
 
 Parameters:
 * tr : 0 means use decision-making to get results. 1 (default) means train normal model
@@ -103,42 +104,3 @@ python main --ns=500 --t=0 --vt=.014 # use large value of ns only on GPU, will b
 [1] https://www.kaggle.com/cdeotte/how-to-choose-cnn-architecture-mnist
 
 [2] http://mlg.eng.cam.ac.uk/yarin/thesis/thesis.pdf
-
-<!-- 
-# DATA DESCRIPTION
-
-The data file mnist.csv contains gray-scale images of hand-drawn digits,
-from zero through nine.
-
-Each image is 28 pixels in height and 28 pixels in width, for a total of 784
-pixels in total. Each pixel has a single pixel-value associated with it,
-indicating the lightness or darkness of that pixel, with higher numbers meaning
-darker. This pixel-value is an integer between 0 and 255, inclusive.
-
-The data set (mnist.csv), has 785 columns. The first column, called
-"label", is the digit that was drawn by the user. The rest of the columns
-contain the pixel-values of the associated image.
-
-Each pixel column in the training set has a name like pixelx, where x is an
-integer between 0 and 783, inclusive. To locate this pixel on the image,
-suppose that we have decomposed x as x = i * 28 + j, where i and j are integers
-between 0 and 27, inclusive. Then pixelx is located on row i and column j of a
-28 x 28 matrix, (indexing by zero).
-
-For example, pixel31 indicates the pixel that is in the fourth column from the
-left, and the second row from the top, as in the ascii-diagram below.
-
-Visually, if we omit the "pixel" prefix, the pixels make up the image like this:
-
-000 001 002 003 ... 026 027
-028 029 030 031 ... 054 055
-056 057 058 059 ... 082 083
- |   |   |   |  ...  |   |
-728 729 730 731 ... 754 755
-756 757 758 759 ... 782 783 
-
-# ACKNOWLEDGEMENTS
-More details about the dataset, including algorithms that
-have been tried on it and their levels of success, can be found at
-http://yann.lecun.com/exdb/mnist/index.html. The dataset is made available
-under a Creative Commons Attribution-Share Alike 3.0 license. -->

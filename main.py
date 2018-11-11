@@ -51,9 +51,13 @@ elif args.model == 2:
     network = Net2(args.drp)
 elif args.model == 3:
     network = Net3(args.drp)
+elif args.model == 4:
+    network = Net4(args.drp)
 else:
     print("Error, wrong model specified")
     exit()
+
+print(network)
 
 if torch.cuda.is_available():
     network = network.cuda()
@@ -110,6 +114,7 @@ def test(epoch, bestFP, data_loader):
 
 
 def decision(data_loader):
+    network.train()
     finOutAll, finTarAll, finleft, finpred, lO = [], [], [], [], 0
     for data, target in data_loader:
       outs = []
@@ -143,7 +148,7 @@ def decision(data_loader):
       
         # if outM[ind, i] < .5:
         
-        #if i!=j:
+        # if i!=j:
         #  if ind in predicted:
         #    print(outM[ind, i], j, i)
         #    print("----------------")
